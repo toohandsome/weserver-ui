@@ -1,95 +1,71 @@
 <template>
    <div class="app-container">
-      <div>
-         <el-input v-model="inputPath" @focus="pathInputFocus" @blur="pathInputBlue">
-            <template #prepend>
-
-               <el-button :icon="CaretLeft" @click="backClick" @mouseenter="backMouseenter" @mouseout="backMouseout"
-                  :type="backType" />
-            </template>
-            <template #prefix>
-               <!-- <el-button-group> -->
-               <div v-for="(path, i) in pathArr" :key="i" class="pathButGroup">
-                  <el-button @click="backClick" width="100px" :type="backType" :v-show="showPathBut">
-                     {{path}}
-                  </el-button>
-                  <el-button @click="backClick" width="5px" :icon="ArrowRight">
-                  </el-button>
-               </div>
-               <!-- </el-button-group> -->
-
-
-
-            </template>
-            <template #append>
-               <el-button :icon="Refresh" />
-            </template>
-
-         </el-input>
-      </div>
+       <FileTop></FileTop>
    </div>
 </template>
+ 
 
-<script setup name="Online">
+<script>
 import { list as initData } from "@/api/monitor/online";
 import { ArrowRight, CaretLeft, Refresh } from '@element-plus/icons-vue';
-const { proxy } = getCurrentInstance();
-
-const onlineList = ref([]);
-const loading = ref(true);
-var showPathBut = true;
-const total = ref(0);
-const pageNum = ref(1);
-const pageSize = ref(10);
-const inputPath = ref("/root/abc/123/nnn");
-var backType = ref("");
-const queryParams = ref({
-   ipaddr: undefined,
-   userName: undefined
-});
-var pathArr = ["\xa0\xa0根目录", "root", "abc", "123", "nnn"];
-/** 查询登录日志列表 */
-function getList() {
-   loading.value = true;
-   initData(queryParams.value).then(response => {
-      onlineList.value = response.rows;
-      total.value = response.total;
-      loading.value = false;
-   });
-}
-function backClick() {
-   console.log("back");
-}
-function backMouseenter() {
-   console.log("鼠标划入");
-   backType = "primary"
-}
-function backMouseout() {
-   console.log("按钮松开");
-   backType = "default"
-}
-function pathInputFocus() {
-   console.log("pathInputFocus");
-   showPathBut = false;
-}
-function pathInputBlue() {
-   console.log("pathInputBlue");
-   showPathBut = true;
+import FileTop from '@/components/FileTop'
+export default {
+   data() {
+      return {
+         pathArr: ["\xa0\xa0根目录", "root", "abc", "123", "nnn"],
+         showPathBut: true,
+         backType: '',
+         inputPath: "/root/abc/123/nnn",
+         arrowRight: ArrowRight,
+         caretLeft: CaretLeft,
+         refresh: Refresh,
+         searchPath:"",
+         
+      }
+   },
+   methods: {
+      pathInputFocus() {
+         this.showPathBut = false;
+         console.log("pathInputFocus", this.showPathBut, this);
+      },
+      pathInputBlue() {
+         this.showPathBut = true;
+         console.log("pathInputBlue", this.showPathBut);
+      },
+      backClick() {
+         console.log("back");
+      },
+      backMouseenter() {
+         console.log("鼠标划入");
+         this.backType = "primary"
+      },
+      backMouseout() {
+         console.log("按钮松开");
+         this.backType = "default"
+      }
+   }
 }
 </script>
+
 <style lang='scss' scoped>
 .pathButGroup .el-button {
    margin-left: 0px;
    border-radius: 0px;
    padding: 2px;
-   border:0.5px;
+   border: 0.5px;
    background-color: #f5f7fa;
    margin-top: 1.5px;
    height: 29.5px;
    // border: 0px;
 }
-::v-deep .el-input__prefix{
+
+
+:deep .el-input__prefix {
    transform: translateX(35px) !important;
+}
+
+:deep .el-input__inner {
+   padding-left: 6px !important;
 }
 
 
