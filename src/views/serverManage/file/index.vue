@@ -2,8 +2,8 @@
    <div class="app-container">
       <FileTop></FileTop>
       <el-divider />
-      <div style="display:flex;width: 100%;">
-         <div style="width: 70%;margin-bottom: 5px;    margin-top: -10px;">
+      <div style="display:flex;width: 100%;margin-bottom: 5px;    margin-top: -10px;">
+         <div style="width: 70%;">
             <el-button> 上传 </el-button>
             <el-dropdown>
                <el-button :icon="search">
@@ -22,7 +22,7 @@
             <el-button> 终端 </el-button>
          </div>
          <div style="width: 30%; ">
-            <el-button-group>
+            <el-button-group style="    float: right;">
                <el-button type="primary" :icon="ArrowLeft">图标模式</el-button>
                <el-button type="primary">
                   列表模式  
@@ -30,13 +30,14 @@
             </el-button-group>
          </div>
       </div>
-      <el-table ref="multipleTableRef" :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
+      <el-table ref="multipleTableRef" :data="tableData" style="width: 100%" @selection-change="handleSelectionChange" size="small" row-contextmenu="rowContextmenu" row-dblclick="rowDblclick">
          <el-table-column type="selection" width="55" />
-         <el-table-column property="fileName" label="文件名" show-overflow-tooltip>
+         <el-table-column property="fileName" label="文件名" show-overflow-tooltip sortable>
          </el-table-column>
-         <el-table-column property="onwer" label="所有者/权限" width="150" />
-         <el-table-column property="size" label="大小" width="150" />
-         <el-table-column property="upTime" label="修改时间" width="240" />
+         <el-table-column property="upTime" label="修改时间" width="240" sortable />
+         <el-table-column property="type" label="类型" width="150" sortable />
+         <el-table-column property="size" label="大小" width="150" sortable />
+         <el-table-column property="onwer" label="所有者/权限" width="150" sortable/>
          <el-table-column label="操作" align="right">
 
             <template #default="scope">
@@ -72,7 +73,7 @@
 
       </el-table>
 
-       <div class="block">
+       <div style="    float: right;margin-top: 10px">
          <el-pagination v-model:currentPage="currentPage4" v-model:page-size="pageSize4"
             :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" background
             layout="total, sizes, prev, pager, next, jumper" :total="400" @size-change="handleSizeChange"
@@ -101,18 +102,21 @@ export default {
                "fileName": "1.txt",
                "onwer": "755/root",
                "size": "9.65 KB",
+               "type":"txt",
                "upTime": "2020-01-01 09:23:22"
             },
             {
                "fileName": "YXD-LOG.txt",
                "onwer": "777/root",
                "size": "109 MB",
+               "type":"txt",
                "upTime": "2022-11-11 23:46:52"
             },
             {
                "fileName": "wps.exe",
                "onwer": "755/root",
                "size": "145 MB",
+               "type":"exe",
                "upTime": "2022-05-08 19:32:27"
             }
          ]
