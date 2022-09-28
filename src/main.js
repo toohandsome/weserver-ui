@@ -43,6 +43,16 @@ import TreeSelect from '@/components/TreeSelect'
 import DictTag from '@/components/DictTag'
 
 import FileTop from '@/components/FileTop'
+import 'xe-utils'
+import {
+  // 全局对象
+  VXETable,
+  Icon,
+  Column,
+  // 表格
+  Table
+} from 'vxe-table'
+import zhCN from 'vxe-table/es/locale/lang/zh-CN'
 
 const app = createApp(App)
 
@@ -65,6 +75,14 @@ app.component('ImageUpload', ImageUpload)
 app.component('ImagePreview', ImagePreview)
 app.component('RightToolbar', RightToolbar)
 app.component('FileTop', FileTop)
+
+VXETable.setup({
+  i18n: (key, args) => XEUtils.toFormatString(XEUtils.get(zhCN, key), args)
+})
+
+ 
+app.use(Table)
+app.use(Icon)
 
 app.use(router)
 app.use(store)

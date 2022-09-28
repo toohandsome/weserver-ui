@@ -1,187 +1,317 @@
 <template>
-  <div class="app-container">
-    <el-row>
-      <el-col :span="12" class="card-box">
-        <el-card>
-          <template #header><span>CPU</span></template>
-          <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%;">
-              <thead>
-                <tr>
-                  <th class="el-table__cell is-leaf"><div class="cell">属性</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">值</div></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">核心数</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.cpu.cpuNum }}</div></td>
-                </tr>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">用户使用率</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.cpu.used }}%</div></td>
-                </tr>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">系统使用率</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.cpu.sys }}%</div></td>
-                </tr>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">当前空闲率</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.cpu.free }}%</div></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </el-card>
-      </el-col>
+  <div>
+    <p class="tip">右键菜单，支持表头菜单、内容菜单、表尾菜单，自定义样式，配置项 <table-api-link prop="menu-config"/>={header,body,footer}</p>
 
-      <el-col :span="12" class="card-box">
-        <el-card>
-          <template #header><span>内存</span></template>
-          <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%;">
-              <thead>
-                <tr>
-                  <th class="el-table__cell is-leaf"><div class="cell">属性</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">内存</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">JVM</div></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">总内存</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.mem">{{ server.mem.total }}G</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.total }}M</div></td>
-                </tr>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">已用内存</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.mem">{{ server.mem.used}}G</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.used}}M</div></td>
-                </tr>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">剩余内存</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.mem">{{ server.mem.free }}G</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.free }}M</div></td>
-                </tr>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">使用率</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.mem" :class="{'text-danger': server.mem.usage > 80}">{{ server.mem.usage }}%</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm" :class="{'text-danger': server.jvm.usage > 80}">{{ server.jvm.usage }}%</div></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </el-card>
-      </el-col>
+    <vxe-table
+      border
+      show-footer
+      highlight-current-row
+      highlight-current-column
+      :footer-method="footerMethod"
+      :data="demo1.tableData"
+      :menu-config="demo1.tableMenu"
+      @menu-click="contextMenuClickEvent">
+      <vxe-column type="seq" width="60"></vxe-column>
+      <vxe-column field="name" title="Name" sortable></vxe-column>
+      <vxe-column field="sex" title="Sex"></vxe-column>
+      <vxe-column field="age" title="Age"></vxe-column>
+      <vxe-column field="address" title="Address"></vxe-column>
+    </vxe-table>
 
-      <el-col :span="24" class="card-box">
-        <el-card>
-          <template #header><span>服务器信息</span></template>
-          <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%;">
-              <tbody>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">服务器名称</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.computerName }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">操作系统</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.osName }}</div></td>
-                </tr>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">服务器IP</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.computerIp }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">系统架构</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.osArch }}</div></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </el-card>
-      </el-col>
+    <pre>
+      <pre-code>
+        | Arrow Up ↑ | 移动到上一个菜单选项 |
+        | Arrow Down ↓ | 移动到下一个菜单选项 |
+        | Arrow Left ← | 关闭二级菜单 |
+        | Arrow Right → | 打开二级菜单 |
+        | Esc | 关闭菜单选项 |
+        | Enter | 选中当前菜单选项 |
+        | Spacebar | 选中当前菜单选项 |
+      </pre-code>
+    </pre>
 
-      <el-col :span="24" class="card-box">
-        <el-card>
-          <template #header><span>Java虚拟机信息</span></template>
-          <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%;table-layout:fixed;">
-              <tbody>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">Java名称</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.name }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">Java版本</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.version }}</div></td>
-                </tr>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">启动时间</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.startTime }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">运行时长</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.runTime }}</div></td>
-                </tr>
-                <tr>
-                  <td colspan="1" class="el-table__cell is-leaf"><div class="cell">安装路径</div></td>
-                  <td colspan="3" class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.home }}</div></td>
-                </tr>
-                <tr>
-                  <td colspan="1" class="el-table__cell is-leaf"><div class="cell">项目路径</div></td>
-                  <td colspan="3" class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.userDir }}</div></td>
-                </tr>
-                <tr>
-                  <td colspan="1" class="el-table__cell is-leaf"><div class="cell">运行参数</div></td>
-                  <td colspan="3" class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.inputArgs }}</div></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </el-card>
-      </el-col>
+    <!-- <p class="demo-code">{{ $t('app.body.button.showCode') }}</p> -->
 
-      <el-col :span="24" class="card-box">
-        <el-card>
-          <template #header><span>磁盘状态</span></template>
-          <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%;">
-              <thead>
-                <tr>
-                  <th class="el-table__cell el-table__cell is-leaf"><div class="cell">盘符路径</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">文件系统</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">盘符类型</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">总大小</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">可用大小</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">已用大小</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">已用百分比</div></th>
-                </tr>
-              </thead>
-              <tbody v-if="server.sysFiles">
-                <tr v-for="(sysFile, index) in server.sysFiles" :key="index">
-                  <td class="el-table__cell is-leaf"><div class="cell">{{ sysFile.dirName }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">{{ sysFile.sysTypeName }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">{{ sysFile.typeName }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">{{ sysFile.total }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">{{ sysFile.free }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">{{ sysFile.used }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" :class="{'text-danger': sysFile.usage > 80}">{{ sysFile.usage }}%</div></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+    <!-- <pre>
+      <pre-code class="xml">{{ demoCodes[0] }}</pre-code>
+      <pre-code class="typescript">{{ demoCodes[1] }}</pre-code>
+      <pre-code class="css">{{ demoCodes[2] }}</pre-code>
+    </pre> -->
   </div>
 </template>
 
-<script setup>
-import { getServer } from '@/api/monitor/server'
-
-const server = ref([]);
-const { proxy } = getCurrentInstance();
-
-function getList() {
-  proxy.$modal.loading("正在加载服务监控数据，请稍候！");
-  getServer().then(response => {
-    server.value = response.data;
-    proxy.$modal.closeLoading();
-  });
-}
-
-getList();
-</script>
+<script lang="ts">
+  import { defineComponent, reactive } from 'vue'
+  import { VXETable } from  'vxe-table'
+  import { VxeTableEvents, VxeTablePropTypes } from 'vxe-table'
+  import 'xe-utils'
+  
+  export default defineComponent({
+    setup () {
+      const demo1 = reactive({
+        tableData: [
+          { id: 10001, name: 'Test1', role: 'Develop', sex: 'Man', age: 28, address: 'test abc' },
+          { id: 10002, name: 'Test2', role: 'Test', sex: 'Women', age: 22, address: 'Guangzhou' },
+          { id: 10003, name: 'Test3', role: 'PM', sex: 'Man', age: 32, address: 'Shanghai' },
+          { id: 10004, name: 'Test4', role: 'Designer', sex: 'Women', age: 36, address: 'Guangzhou' },
+          { id: 10005, name: 'Test5', role: 'Develop', sex: 'Women', age: 24, address: 'Shanghai' },
+          { id: 10006, name: 'Test6', role: 'Designer', sex: 'Man', age: 34, address: 'test abc' }
+        ],
+        tableMenu: {
+          className: 'my-menus',
+          header: {
+            options: [
+              [
+                { code: 'exportAll', name: '导出所有.csv' }
+              ]
+            ]
+          },
+          body: {
+            options: [
+              [
+                { code: 'copy', name: '复制', prefixIcon: 'vxe-icon-copy', className: 'my-copy-item' }
+              ],
+              [
+                { code: 'remove', name: '删除', prefixIcon: 'vxe-icon-delete-fill' },
+                {
+                  name: '筛选',
+                  children: [
+                    { code: 'clearFilter', name: '清除筛选' },
+                    { code: 'filterSelect', name: '按所选单元格的值筛选' }
+                  ]
+                },
+                {
+                  code: 'sort',
+                  name: '排序',
+                  prefixIcon: 'fa fa-sort color-blue',
+                  children: [
+                    { code: 'clearSort', name: '清除排序' },
+                    { code: 'sortAsc', name: '升序', prefixIcon: 'fa fa-sort-alpha-asc color-orange' },
+                    { code: 'sortDesc', name: '倒序', prefixIcon: 'fa fa-sort-alpha-desc color-orange' }
+                  ]
+                },
+                { code: 'print', name: '打印', disabled: true }
+              ]
+            ]
+          },
+          footer: {
+            options: [
+              [
+                { code: 'clearAll', name: '清空数据' }
+              ]
+            ]
+          }
+        } as VxeTablePropTypes.MenuConfig
+      })
+  
+      const contextMenuClickEvent: VxeTableEvents.MenuClick = ({ menu, row, column }) => {
+        switch (menu.code) {
+          case 'copy':
+            // 示例
+            if (row && column) {
+              VXETable.modal.message({ content: '已复制到剪贴板！', status: 'success' })
+            }
+            break
+          default:
+            VXETable.modal.alert(`点击了 ${menu.name} 选项`)
+        }
+      }
+  
+      const meanNum = (list: any[], field: string) => {
+        let count = 0
+        list.forEach(item => {
+          count += Number(item[field])
+        })
+        return count / list.length
+      }
+  
+      const footerMethod: VxeTablePropTypes.FooterMethod = ({ columns, data }) => {
+        return [
+          columns.map((column, columnIndex) => {
+            if (columnIndex === 0) {
+              return '平均'
+            }
+            if (['age', 'rate'].includes(column.property)) {
+              return meanNum(data, column.property)
+            }
+            return null
+          })
+        ]
+      }
+  
+      return {
+        demo1,
+        contextMenuClickEvent,
+        footerMethod,
+        demoCodes: [
+          `
+          <vxe-table
+            border
+            show-footer
+            highlight-current-row
+            highlight-current-column
+            :footer-method="footerMethod"
+            :data="demo1.tableData"
+            :menu-config="demo1.tableMenu"
+            @menu-click="contextMenuClickEvent">
+            <vxe-column type="seq" width="60"></vxe-column>
+            <vxe-column field="name" title="Name" sortable></vxe-column>
+            <vxe-column field="sex" title="Sex"></vxe-column>
+            <vxe-column field="age" title="Age"></vxe-column>
+            <vxe-column field="address" title="Address"></vxe-column>
+          </vxe-table>
+          `,
+          `
+          import { defineComponent, reactive } from 'vue'
+          import { VXETable, VxeTableEvents, VxeTablePropTypes } from 'vxe-table'
+  
+          export default defineComponent({
+            setup () {
+              const demo1 = reactive({
+                tableData: [
+                  { id: 10001, name: 'Test1', role: 'Develop', sex: 'Man', age: 28, address: 'test abc' },
+                  { id: 10002, name: 'Test2', role: 'Test', sex: 'Women', age: 22, address: 'Guangzhou' },
+                  { id: 10003, name: 'Test3', role: 'PM', sex: 'Man', age: 32, address: 'Shanghai' },
+                  { id: 10004, name: 'Test4', role: 'Designer', sex: 'Women', age: 36, address: 'Guangzhou' },
+                  { id: 10005, name: 'Test5', role: 'Develop', sex: 'Women', age: 24, address: 'Shanghai' },
+                  { id: 10006, name: 'Test6', role: 'Designer', sex: 'Man', age: 34, address: 'test abc' }
+                ],
+                tableMenu: {
+                  className: 'my-menus',
+                  header: {
+                    options: [
+                      [
+                        { code: 'exportAll', name: '导出所有.csv' }
+                      ]
+                    ]
+                  },
+                  body: {
+                    options: [
+                      [
+                        { code: 'copy', name: 'app.body.label.copy', prefixIcon: 'fa fa-copy', className: 'my-copy-item' }
+                      ],
+                      [
+                        { code: 'remove', name: '删除', prefixIcon: 'fa fa-trash-o color-red' },
+                        {
+                          name: '筛选',
+                          children: [
+                            { code: 'clearFilter', name: '清除筛选' },
+                            { code: 'filterSelect', name: '按所选单元格的值筛选' }
+                          ]
+                        },
+                        {
+                          code: 'sort',
+                          name: '排序',
+                          prefixIcon: 'fa fa-sort color-blue',
+                          children: [
+                            { code: 'clearSort', name: '清除排序' },
+                            { code: 'sortAsc', name: '升序', prefixIcon: 'fa fa-sort-alpha-asc color-orange' },
+                            { code: 'sortDesc', name: '倒序', prefixIcon: 'fa fa-sort-alpha-desc color-orange' }
+                          ]
+                        },
+                        { code: 'print', name: '打印', disabled: true }
+                      ]
+                    ]
+                  },
+                  footer: {
+                    options: [
+                      [
+                        { code: 'clearAll', name: '清空数据' }
+                      ]
+                    ]
+                  }
+                } as VxeTablePropTypes.MenuConfig
+              })
+  
+              const contextMenuClickEvent: VxeTableEvents.MenuClick = ({ menu, row, column }) => {
+                switch (menu.code) {
+                  case 'copy':
+                    // 示例
+                    if (row && column) {
+                      VXETable.modal.message({ content: '已复制到剪贴板！', status: 'success' })
+                    }
+                    break
+                  default:
+                    VXETable.modal.alert(\`点击了 \${menu.name} 选项\`)
+                }
+              }
+  
+              const meanNum = (list: any[], field: string) => {
+                let count = 0
+                list.forEach(item => {
+                  count += Number(item[field])
+                })
+                return count / list.length
+              }
+  
+              const footerMethod: VxeTablePropTypes.FooterMethod = ({ columns, data }) => {
+                return [
+                  columns.map((column, columnIndex) => {
+                    if (columnIndex === 0) {
+                      return '平均'
+                    }
+                    if (['age', 'rate'].includes(column.property)) {
+                      return meanNum(data, column.property)
+                    }
+                    return null
+                  })
+                ]
+              }
+  
+              return {
+                demo1,
+                contextMenuClickEvent,
+                footerMethod
+              }
+            }
+          })
+          `,
+          `
+          .my-menus {
+            background-color: #F8F8F9;
+          }
+          .my-menus .vxe-ctxmenu--link {
+            width: 200px;
+          }
+          .my-copy-item {
+            font-weight: 700;
+            font-style: oblique;
+          }
+          .color-red {
+            color: red;
+          }
+          .color-blue {
+            color: blue;
+          }
+          .color-orange {
+            color: orange;
+          }
+          `
+        ]
+      }
+    }
+  })
+  </script>
+  
+  <style>
+  .my-menus {
+    background-color: #F8F8F9;
+  }
+  .my-menus .vxe-ctxmenu--link {
+    width: 200px;
+  }
+  .my-copy-item {
+    font-weight: 700;
+    font-style: oblique;
+  }
+  .color-red {
+    color: red;
+  }
+  .color-blue {
+    color: blue;
+  }
+  .color-orange {
+    color: orange;
+  }
+  </style>
+  
