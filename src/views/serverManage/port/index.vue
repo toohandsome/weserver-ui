@@ -1,187 +1,259 @@
 <template>
   <div class="app-container">
-    <el-row>
-      <el-col :span="12" class="card-box">
-        <el-card>
-          <template #header><span>CPU</span></template>
-          <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%;">
-              <thead>
-                <tr>
-                  <th class="el-table__cell is-leaf"><div class="cell">属性</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">值</div></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">核心数</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.cpu.cpuNum }}</div></td>
-                </tr>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">用户使用率</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.cpu.used }}%</div></td>
-                </tr>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">系统使用率</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.cpu.sys }}%</div></td>
-                </tr>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">当前空闲率</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.cpu.free }}%</div></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </el-card>
-      </el-col>
+     
+     <div style="display:flex;width: 100%;margin-bottom: 5px;    margin-top: -10px;">
+        <div style="width: 70%;">
+           <el-button @click="dialogUploadVisible = true"> 上传 </el-button>
+           <el-dropdown>
+              <el-button >
+                 新建
+                 <el-icon class="el-icon--right">
+                    <arrow-down />
+                 </el-icon>
+              </el-button>
+              <template #dropdown>
+                 <el-dropdown-menu>
+                    <el-dropdown-item>文件</el-dropdown-item>
+                    <el-dropdown-item>文件夹</el-dropdown-item>
+                 </el-dropdown-menu>
+              </template>
+           </el-dropdown>
+           <el-button> 终端 </el-button>
+        </div>
+        <div style="width: 30%; ">
 
-      <el-col :span="12" class="card-box">
-        <el-card>
-          <template #header><span>内存</span></template>
-          <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%;">
-              <thead>
-                <tr>
-                  <th class="el-table__cell is-leaf"><div class="cell">属性</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">内存</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">JVM</div></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">总内存</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.mem">{{ server.mem.total }}G</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.total }}M</div></td>
-                </tr>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">已用内存</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.mem">{{ server.mem.used}}G</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.used}}M</div></td>
-                </tr>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">剩余内存</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.mem">{{ server.mem.free }}G</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.free }}M</div></td>
-                </tr>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">使用率</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.mem" :class="{'text-danger': server.mem.usage > 80}">{{ server.mem.usage }}%</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm" :class="{'text-danger': server.jvm.usage > 80}">{{ server.jvm.usage }}%</div></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </el-card>
-      </el-col>
+           <el-button-group style="    float: right;">
+              <el-button v-show="showPasteOpt"  @click="handleStop">结束</el-button>
+              
+           </el-button-group>
+        </div>
+     </div>
+     <el-table ref="multipleTableRef" :data="tableData" style="width: 100%" @selection-change="handleSelectionChange"
+        @select="handleSelection" @select-all="handleSelectionselectall" size="small" row-contextmenu="rowContextmenu"
+        row-dblclick="rowDblclick">
+        <el-table-column type="selection" width="55" />
+        <el-table-column property="pid" width="65" label="PID"  sortable>
+        </el-table-column>
+        <el-table-column property="processName" label="进程"  width="150" show-overflow-tooltip sortable>
+        </el-table-column>
+        <el-table-column property="startTime" label="启动时间"  width="150"  sortable />
+        <!-- <el-table-column property="runTime" label="运行时间"  sortable /> -->
+        <el-table-column property="port" label="端口"  show-overflow-tooltip  width="70"  sortable />
+        <el-table-column property="men" label="内存"   width="70"  sortable />
+        <el-table-column property="cpu" label="CPU"  width="70"  sortable />
+        <el-table-column property="path" label="路径" show-overflow-tooltip  sortable />
+        <el-table-column property="cmd" label="cmd" show-overflow-tooltip  sortable />
+        <!-- <el-table-column property="onwer" label="文件"  show-overflow-tooltip sortable /> -->
+        <el-table-column label="操作" align="right">
 
-      <el-col :span="24" class="card-box">
-        <el-card>
-          <template #header><span>服务器信息</span></template>
-          <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%;">
-              <tbody>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">服务器名称</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.computerName }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">操作系统</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.osName }}</div></td>
-                </tr>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">服务器IP</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.computerIp }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">系统架构</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.osArch }}</div></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </el-card>
-      </el-col>
+           <template #default="scope">
+              <el-button-group>
+                 <el-button size="small" @click="handleStop(scope.$index, scope.row)">结束</el-button>
+                 <el-button size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
 
-      <el-col :span="24" class="card-box">
-        <el-card>
-          <template #header><span>Java虚拟机信息</span></template>
-          <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%;table-layout:fixed;">
-              <tbody>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">Java名称</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.name }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">Java版本</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.version }}</div></td>
-                </tr>
-                <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">启动时间</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.startTime }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">运行时长</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.runTime }}</div></td>
-                </tr>
-                <tr>
-                  <td colspan="1" class="el-table__cell is-leaf"><div class="cell">安装路径</div></td>
-                  <td colspan="3" class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.home }}</div></td>
-                </tr>
-                <tr>
-                  <td colspan="1" class="el-table__cell is-leaf"><div class="cell">项目路径</div></td>
-                  <td colspan="3" class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.userDir }}</div></td>
-                </tr>
-                <tr>
-                  <td colspan="1" class="el-table__cell is-leaf"><div class="cell">运行参数</div></td>
-                  <td colspan="3" class="el-table__cell is-leaf"><div class="cell" v-if="server.jvm">{{ server.jvm.inputArgs }}</div></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </el-card>
-      </el-col>
+              </el-button-group>
+           </template>
 
-      <el-col :span="24" class="card-box">
-        <el-card>
-          <template #header><span>磁盘状态</span></template>
-          <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%;">
-              <thead>
-                <tr>
-                  <th class="el-table__cell el-table__cell is-leaf"><div class="cell">盘符路径</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">文件系统</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">盘符类型</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">总大小</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">可用大小</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">已用大小</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">已用百分比</div></th>
-                </tr>
-              </thead>
-              <tbody v-if="server.sysFiles">
-                <tr v-for="(sysFile, index) in server.sysFiles" :key="index">
-                  <td class="el-table__cell is-leaf"><div class="cell">{{ sysFile.dirName }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">{{ sysFile.sysTypeName }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">{{ sysFile.typeName }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">{{ sysFile.total }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">{{ sysFile.free }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">{{ sysFile.used }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" :class="{'text-danger': sysFile.usage > 80}">{{ sysFile.usage }}%</div></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+        </el-table-column>
+
+     </el-table>
+
+      <div style="    float: right;margin-top: 10px">
+        <el-pagination v-model:currentPage="currentPage4" v-model:page-size="pageSize4"
+           :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" background
+           layout="total, sizes, prev, pager, next, jumper" :total="400" @size-change="handlePageSizeChange"
+           @current-change="handleCurrentChange" />
+     </div>
+
+     <el-table ref="multipleTableRef" :data="portTableData" style="width: 100%" @selection-change="handleSelectionChange"
+        @select="handleSelection" @select-all="handleSelectionselectall" size="small" row-contextmenu="rowContextmenu"
+        row-dblclick="rowDblclick">
+        <el-table-column type="selection" width="55" />
+        <el-table-column property="protocol" width="70" label="协议"  sortable>
+        </el-table-column>
+        <el-table-column property="localAddr" label="本地地址"  width="150" show-overflow-tooltip sortable>
+        </el-table-column>
+        <el-table-column property="remoteAddr" label="外部地址"  width="150" show-overflow-tooltip sortable>
+        </el-table-column>
+        <el-table-column property="pid" label="PID"  show-overflow-tooltip  width="65"  sortable />
+        <el-table-column property="process" label="进程" show-overflow-tooltip   width="150"  sortable />
+        <el-table-column property="status" label="状态"  width="100"  sortable />
+        <el-table-column property="path" label="路径" show-overflow-tooltip  sortable />
+        <!-- <el-table-column property="runTime" label="运行时间"  sortable /> -->
+        
+        <el-table-column label="操作" align="right">
+
+           <template #default="scope">
+              <el-button-group>
+                 <el-button size="small" @click="handleStop(scope.$index, scope.row)">结束</el-button>
+                 <el-button size="small" @click="handleDetail(scope.$index, scope.row)">详情</el-button>
+
+              </el-button-group>
+           </template>
+
+        </el-table-column>
+
+     </el-table>
+
   </div>
 </template>
 
-<script setup>
-import { getServer } from '@/api/monitor/server'
 
-const server = ref([]);
-const { proxy } = getCurrentInstance();
+<script>
+import { Search } from '@element-plus/icons-vue';
+import FileUpload from '../../../components/FileUpload/index.vue';
+export default {
+  data() {
+     return {
+        pathArr: ["  根目录", "root", "abc", "123", "nnn"],
+        showPathBut: true,
+        search:Search,
+        backType: "",
+        inputPath: "/root/abc/123/nnn",
+        
+        searchPath: "",
+        showBatchOpt: false,
+        showPasteOpt:false,
+        dialogUploadVisible: false,
+        tableData: [
+           {
+              "pid": "20819",
+              "processName": "redis-server",
+              "startTime": "2017-09-14 22:11:45",
+              "path": "/opt/webserver/middleWare/redis",
+              "port": "63791",
+              "men":"309 MB",
+              "cpu":"15.6%",
+              "cmd":"/opt/webserver/middleWare/redis/src/redis-server",
+           },
+           {
+              "pid": "208569",
+              "processName": "redis-server",
+              "startTime": "2017-09-14 22:11:45",
+              "path": "/opt/webserver/middleWare/redis",
+              "port": "6379",
+              "men":"309 MB",
+              "cpu":"15.6%",
+              "cmd":"/opt/webserver/middleWare/redis/src/redis-server",
+           },
+           {
+              "pid": "2089",
+              "processName": "redis-server",
+              "startTime": "2017-09-14 22:11:45",
+              "path": "/opt/webserver/middleWare/redis",
+              "port": "6379",
+              "men":"309 MB",
+              "cpu":"15.6%",
+              "cmd":"/opt/webserver/middleWare/redis/src/redis-server",
+           }
+        ],
+        portTableData: [
+           {
+              "protocol": "tcp",
+              "localAddr": "127.0.0.1:9877",
+              "remoteAddr": "192.168.2.9:27271",
+              "pid": "7521",
+              "process": "webserver.jar",
+              "path":"/opt/webserver/server/webserver.jar",
+              "status":"监听"
+           },
+           {
+            "protocol": "tcp",
+              "localAddr": "127.0.0.1:9877",
+              "remoteAddr": "192.168.2.9:27271",
+              "pid": "75211",
+              "process": "webserver.jar",
+              "path":"/opt/webserver/server/webserver.jar",
+              "status":"监听"
+           },
+           {
+            "protocol": "tcp",
+              "localAddr": "127.0.0.1:9877",
+              "remoteAddr": "192.168.2.9:27271",
+              "pid": "752221",
+              "process": "webserver.jar",
+              "path":"/opt/webserver/server/webserver.jar",
+              "status":"监听"
+           }
+        ]
+     };
+  },
+  methods: {
+     pathInputFocus() {
+        this.showPathBut = false;
+        console.log("pathInputFocus", this.showPathBut, this);
+     },
+     pathInputBlue() {
+        this.showPathBut = true;
+        console.log("pathInputBlue", this.showPathBut);
+     },
+     
+     backMouseenter() {
+        console.log("鼠标划入");
+        this.backType = "primary";
+     },
+     backMouseout() {
+        console.log("按钮松开");
+        this.backType = "default";
+     },
+     handlePageSizeChange() {
+        console.log("handlePageSizeChange");
+     },
+     handleSelectionChange() {
+        console.log("handleSelectionChange");
+        let arr = this.$refs.multipleTableRef.getSelectionRows()
+        if (arr && arr.length == 0) {
+           this.showBatchOpt = false;
+        } else {
+           this.showBatchOpt = true;
+        }
 
-function getList() {
-  proxy.$modal.loading("正在加载服务监控数据，请稍候！");
-  getServer().then(response => {
-    server.value = response.data;
-    proxy.$modal.closeLoading();
-  });
+
+     },
+     handleSelection() {
+        this.showBatchOpt = true;
+        console.log("handleSelection");
+     },
+     handleSelectionselectall() {
+
+        console.log("handleSelectionselectall");
+        let arr = this.$refs.multipleTableRef.getSelectionRows()
+        if (arr && arr.length == 0) {
+           this.showBatchOpt = false;
+        } else {
+           this.showBatchOpt = true;
+        }
+     },
+     handleCopy(){
+        console.log("handleCopy");
+        this.showPasteOpt = true;
+     },
+     handleCut(){
+        console.log("handleCut");
+        this.showPasteOpt = true;
+     },
+     handlePaste(){
+        console.log("handlePaste");
+        this.showPasteOpt = false;
+     }
+  },
+  components: { FileUpload }
+}
+</script>
+
+<style lang='scss' scoped>
+:deep .el-dialog__body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-getList();
-</script>
+:deep .el-upload-dragger {
+  width: 100%;
+}
+
+:deep .el-upload {
+  width: 100%;
+}
+ 
+</style>
