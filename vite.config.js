@@ -1,8 +1,7 @@
-import { defineConfig, loadEnv } from 'vite'
 import path from 'path'
-import createVitePlugins from './vite/plugins'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig, loadEnv } from 'vite'
 import { createStyleImportPlugin, VxeTableResolve } from 'vite-plugin-style-import'
+import createVitePlugins from './vite/plugins'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
@@ -37,7 +36,7 @@ export default defineConfig(({ mode, command }) => {
       proxy: {
         // https://cn.vitejs.dev/config/#server-proxy
         '/dev-api': {
-          target: 'http://localhost:8080',
+          target: 'http://139.9.149.74:7099',
           changeOrigin: true,
           rewrite: (p) => p.replace(/^\/dev-api/, '')
         }
