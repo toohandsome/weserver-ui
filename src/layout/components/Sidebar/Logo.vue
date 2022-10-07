@@ -14,9 +14,9 @@
 </template>
 
 <script setup>
-import variables from '@/assets/styles/variables.module.scss'
-import logo from '@/assets/logo/logo.png'
-import useSettingsStore from '@/store/modules/settings'
+import logo from '@/assets/logo/logo.png';
+import variables from '@/assets/styles/variables.module.scss';
+import useSettingsStore from '@/store/modules/settings';
 
 defineProps({
   collapse: {
@@ -25,7 +25,7 @@ defineProps({
   }
 })
 
-const title = ref('若依管理系统');
+const title = ref('webserver');
 const settingsStore = useSettingsStore();
 const sideTheme = computed(() => settingsStore.sideTheme);
 </script>

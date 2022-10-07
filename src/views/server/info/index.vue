@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="webserver-container">
     <el-row>
       <el-col :span="12" class="card-box">
         <el-card>
@@ -134,7 +134,7 @@
 </template>
 
 <script setup>
-import { getServer } from '@/api/monitor/server'
+import { getServer } from '@/api/monitor/server';
 
 const server = ref([]);
 const { proxy } = getCurrentInstance();

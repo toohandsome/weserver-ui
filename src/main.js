@@ -3,29 +3,31 @@ import { createApp } from 'vue'
 import Cookies from 'js-cookie'
 
 import ElementPlus from 'element-plus'
-import locale from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import locale from 'element-plus/lib/locale/lang/zh-cn'; // 中文语言
 
-import '@/assets/styles/index.scss' // global css
+import '@/assets/styles/index.scss'; // global css
 
+import VueSimpleContextMenu from 'vue-simple-context-menu'
+import 'vue-simple-context-menu/dist/vue-simple-context-menu.css'
 import App from './App'
-import store from './store'
+import directive from './directive'; // directive
 import router from './router'
-import directive from './directive' // directive
+import store from './store'
 
 
 // 注册指令
-import plugins from './plugins' // plugins
 import { download } from '@/utils/request'
+import plugins from './plugins'; // plugins
 
 // svg图标
-import 'virtual:svg-icons-register'
 import SvgIcon from '@/components/SvgIcon'
 import elementIcons from '@/components/SvgIcon/svgicon'
+import 'virtual:svg-icons-register'
 
-import './permission' // permission control
+import './permission'; // permission control
 
 import { useDict } from '@/utils/dict'
-import { parseTime, resetForm, addDateRange, handleTree, selectDictLabel, selectDictLabels } from '@/utils/ruoyi'
+import { addDateRange, handleTree, parseTime, resetForm, selectDictLabel, selectDictLabels } from '@/utils/ruoyi'
 
 // 分页组件
 import Pagination from '@/components/Pagination'
@@ -43,16 +45,15 @@ import TreeSelect from '@/components/TreeSelect'
 import DictTag from '@/components/DictTag'
 
 import FileTop from '@/components/FileTop'
-import 'xe-utils'
 import {
-  // 全局对象
-  VXETable,
   Icon,
-  Column,
   // 表格
-  Table
+  Table,
+  // 全局对象
+  VXETable
 } from 'vxe-table'
 import zhCN from 'vxe-table/es/locale/lang/zh-CN'
+import 'xe-utils'
 
 const app = createApp(App)
 
@@ -75,6 +76,7 @@ app.component('ImageUpload', ImageUpload)
 app.component('ImagePreview', ImagePreview)
 app.component('RightToolbar', RightToolbar)
 app.component('FileTop', FileTop)
+app.component('vue-simple-context-menu', VueSimpleContextMenu);
 
 VXETable.setup({
   i18n: (key, args) => XEUtils.toFormatString(XEUtils.get(zhCN, key), args)

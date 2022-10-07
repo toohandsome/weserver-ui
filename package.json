@@ -1,7 +1,7 @@
 {
   "name": "ruoyi",
   "version": "3.8.3",
-  "description": "若依管理系统",
+  "description": "webserver",
   "author": "若依",
   "license": "MIT",
   "scripts": {
@@ -29,8 +29,10 @@
     "vue": "3.2.37",
     "vue-cropper": "1.0.3",
     "vue-router": "4.0.14",
+    "vue-simple-context-menu": "^4.0.4",
     "vxe-table": "^4.3.5",
-    "xe-utils": "^3.5.6"
+    "xe-utils": "^3.5.6",
+    "xterm-addon-attach": "^0.7.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "2.3.3",

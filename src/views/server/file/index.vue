@@ -1,12 +1,16 @@
 <template>
-   <div class="app-container">
+   <div class="webserver-container">
+      <div id="app" @contextmenu="showMenu" style="width: 100px;height: 100px;margin-top: 20px;background: red;">
+         <vue-context-menu :contextMenuData="contextMenuData" @home="home" @deletedata="deletedata"></vue-context-menu>
+      </div>
+
       <FileTop></FileTop>
-      <el-divider />
-      <div style="display:flex;width: 100%;margin-bottom: 5px;    margin-top: -10px;">
+
+      <div style="display:flex;width: 100%;margin-bottom: 5px;    margin-top: 5px;">
          <div style="width: 70%;">
             <el-button @click="dialogUploadVisible = true"> 上传 </el-button>
             <el-dropdown>
-               <el-button >
+               <el-button>
                   新建
                   <el-icon class="el-icon--right">
                      <arrow-down />
@@ -24,7 +28,7 @@
          <div style="width: 30%; ">
 
             <el-button-group style="    float: right;">
-               <el-button v-show="showPasteOpt"  @click="handlePaste">粘贴</el-button>
+               <el-button v-show="showPasteOpt" @click="handlePaste">粘贴</el-button>
                <el-button v-show="showBatchOpt">复制</el-button>
                <el-button v-show="showBatchOpt">剪切</el-button>
                <el-button v-show="showBatchOpt">压缩</el-button>
@@ -54,7 +58,7 @@
                   <el-button size="small" @click="handleEdit(scope.$index, scope.row)">打开</el-button>
 
                   <el-dropdown>
-                     <el-button   size="small"  @click="handleCopy(scope.$index, scope.row)">
+                     <el-button size="small" @click="handleCopy(scope.$index, scope.row)">
                         复制
                         <el-icon class="el-icon--right">
                            <arrow-down />
@@ -84,9 +88,8 @@
 
        <div style="    float: right;margin-top: 10px">
          <el-pagination v-model:currentPage="currentPage4" v-model:page-size="pageSize4"
-            :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" background
-            layout="total, sizes, prev, pager, next, jumper" :total="400" @size-change="handlePageSizeChange"
-            @current-change="handleCurrentChange" />
+            :page-sizes="[100, 200, 300, 400]" size="small" background layout="total, sizes, prev, pager, next, jumper"
+            :total="400" @size-change="handlePageSizeChange" @current-change="handleCurrentChange" />
       </div>
 
       <el-dialog v-model="dialogUploadVisible" title="上传" draggable>
@@ -120,13 +123,15 @@ export default {
       return {
          pathArr: ["  根目录", "root", "abc", "123", "nnn"],
          showPathBut: true,
-         search:Search,
+         
+         search: Search,
          backType: "",
          inputPath: "/root/abc/123/nnn",
-         
+         currentPage4: 3,
+         pageSize4: 10,
          searchPath: "",
          showBatchOpt: false,
-         showPasteOpt:false,
+         showPasteOpt: false,
          dialogUploadVisible: false,
          tableData: [
             {
@@ -150,10 +155,44 @@ export default {
                "type": "exe",
                "upTime": "2022-05-08 19:32:27"
             }
-         ]
+         ],
+         contextMenuData: {
+            menuName: 'demo',
+            //菜单显示的位置
+            axis: {
+               x: null,
+               y: null
+            },
+            //菜单选项
+            menulists: [{
+               fnHandler: 'home', //绑定事件
+               icoName: 'fa fa-home fa-fw', //icon图标
+               btnName: '回到主页' //菜单名称
+            }, {
+               fnHandler: 'deletedata',
+               icoName: 'fa fa-minus-square-o  fa-fw',
+               btnName: '删除布局'
+            }]
+         }
       };
    },
    methods: {
+      handleCurrentChange() {
+         console.log("handleCurrentChange");
+      },
+      showMenu() {
+         event.preventDefault();
+         var x = event.clientX;
+         var y = event.clientY;
+         this.contextMenuData.axis = {
+            x, y
+         }
+      }, homed() {
+         alert("主页")
+      },
+      deletedata() {
+         console.log('delete!')
+      },
       pathInputFocus() {
          this.showPathBut = false;
          console.log("pathInputFocus", this.showPathBut, this);
@@ -162,7 +201,7 @@ export default {
          this.showPathBut = true;
          console.log("pathInputBlue", this.showPathBut);
       },
-      
+
       backMouseenter() {
          console.log("鼠标划入");
          this.backType = "primary";
@@ -199,15 +238,15 @@ export default {
             this.showBatchOpt = true;
          }
       },
-      handleCopy(){
+      handleCopy() {
          console.log("handleCopy");
          this.showPasteOpt = true;
       },
-      handleCut(){
+      handleCut() {
          console.log("handleCut");
          this.showPasteOpt = true;
       },
-      handlePaste(){
+      handlePaste() {
          console.log("handlePaste");
          this.showPasteOpt = false;
       }

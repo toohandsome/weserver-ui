@@ -96,6 +96,10 @@ export default {
     }
   },
   methods: {
+    backClick(){
+      console.log("backClick");
+    },
+
     pathInputFocus() {
       this.showPathBut = false;
       console.log("pathInputFocus", this.showPathBut, this);

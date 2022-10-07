@@ -22,80 +22,51 @@ let websocketclose = e => {
   console.log('断开连接', e)
 }
 
-// export function initWebSocket(wsurl) {
-//   //初始化 websocket
-//   ws = new WebSocket(wsurl)
-//   ws.onmessage = websocketonmessage
-//   ws.onopen = websocketonopen
-//   ws.onerror = websocketonerror
-//   ws.onclose = websocketclose
-// }
+function initWebSocket(wsurl) {
+  //初始化 websocket
+  ws = new WebSocket(wsurl);
+  ws.onmessage = websocketonmessage;
+  ws.onopen = websocketonopen;
+  ws.onerror = websocketonerror;
+  ws.onclose = websocketclose;
+}
 
 
-// // 发送数据
-// export function sendWebsocket(data, callback) {
-//   weboscket_callback = callback
-//   //  判断 data 数据类型
-//   if (typeof data == 'string') {
-//     data = data
-//   } else {
-//     data = JSON.stringify(data)
-//   }
-
-//   //  判断 websocket 的状态
-//   if (ws.readyState === ws.OPEN) {
-//     // 已经打开,可以直接发送
-//     ws.send(data)
-//   } else if (ws.readyState === ws.CONNECTING) {
-//     // 正在开启状态中,则 1 秒后重新发送
-//     setTimeout(() => {
-//       ws.send(data)
-//     }, 1000)
-//   } else {
-//     // 未打开，则开启后重新调用
-//     initWebSocket()
-//     sendWebsocket(data, callback)
-//   }
-// }
-
-// // 手动关闭 websocket
-// export function closewebsocket() {
-//   ws.close()
-// }
-export default {
-  initWebSocket(wsurl) {
-    //初始化 websocket
-    ws = new WebSocket(wsurl)
-    ws.onmessage = websocketonmessage
-    ws.onopen = websocketonopen
-    ws.onerror = websocketonerror
-    ws.onclose = websocketclose
-  },
-  sendWebsocket(data, callback) {
+// 发送数据
+function sendWebsocket(data, callback) {
+  if(callback){
     weboscket_callback = callback
-    //  判断 data 数据类型
-    if (typeof data == 'string') {
-      data = data
-    } else {
-      data = JSON.stringify(data)
-    }
+  }
   
-    //  判断 websocket 的状态
-    if (ws.readyState === ws.OPEN) {
-      // 已经打开,可以直接发送
+  //  判断 data 数据类型
+  if (typeof data == 'string') {
+    data = data
+  } else {
+    data = JSON.stringify(data)
+  }
+
+  //  判断 websocket 的状态
+  if (ws.readyState === ws.OPEN) {
+    // 已经打开,可以直接发送
+    ws.send(data)
+  } else if (ws.readyState === ws.CONNECTING) {
+    // 正在开启状态中,则 1 秒后重新发送
+    setTimeout(() => {
       ws.send(data)
-    } else if (ws.readyState === ws.CONNECTING) {
-      // 正在开启状态中,则 1 秒后重新发送
-      setTimeout(() => {
-        ws.send(data)
-      }, 1000)
-    } else {
-      // 未打开，则开启后重新调用
-      initWebSocket()
-      sendWebsocket(data, callback)
-    }
-  },
-  closewebsocket() {
+    }, 1000)
+  } else {
+    // 未打开，则开启后重新调用
+    initWebSocket()
+    sendWebsocket(data, callback)
+  }
+}
+
+// 手动关闭 websocket
+function closeWebsocket() {
+  if (ws) {
     ws.close()
   }
 }
+
+export { initWebSocket, sendWebsocket, closeWebsocket }
+
