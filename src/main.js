@@ -1,59 +1,52 @@
-import { createApp } from 'vue'
+import { createApp } from 'vue';
 
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
 
-import ElementPlus from 'element-plus'
+import ElementPlus from 'element-plus';
 import locale from 'element-plus/lib/locale/lang/zh-cn'; // 中文语言
 
 import '@/assets/styles/index.scss'; // global css
 
-import VueSimpleContextMenu from 'vue-simple-context-menu'
-import 'vue-simple-context-menu/dist/vue-simple-context-menu.css'
-import App from './App'
+import ContextMenu from '@imengyu/vue3-context-menu';
+import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
+import App from './App';
 import directive from './directive'; // directive
-import router from './router'
-import store from './store'
+import router from './router';
+import store from './store';
 
 
 // 注册指令
-import { download } from '@/utils/request'
+import { download } from '@/utils/request';
 import plugins from './plugins'; // plugins
 
 // svg图标
-import SvgIcon from '@/components/SvgIcon'
-import elementIcons from '@/components/SvgIcon/svgicon'
-import 'virtual:svg-icons-register'
+import SvgIcon from '@/components/SvgIcon';
+import elementIcons from '@/components/SvgIcon/svgicon';
+import 'virtual:svg-icons-register';
 
 import './permission'; // permission control
 
-import { useDict } from '@/utils/dict'
-import { addDateRange, handleTree, parseTime, resetForm, selectDictLabel, selectDictLabels } from '@/utils/ruoyi'
+import { useDict } from '@/utils/dict';
+import { addDateRange, handleTree, parseTime, resetForm, selectDictLabel, selectDictLabels } from '@/utils/ruoyi';
 
 // 分页组件
-import Pagination from '@/components/Pagination'
+import Pagination from '@/components/Pagination';
 // 自定义表格工具组件
-import RightToolbar from '@/components/RightToolbar'
+import RightToolbar from '@/components/RightToolbar';
 // 文件上传组件
-import FileUpload from "@/components/FileUpload"
+import FileUpload from "@/components/FileUpload";
 // 图片上传组件
-import ImageUpload from "@/components/ImageUpload"
+import ImageUpload from "@/components/ImageUpload";
 // 图片预览组件
-import ImagePreview from "@/components/ImagePreview"
+import ImagePreview from "@/components/ImagePreview";
 // 自定义树选择组件
-import TreeSelect from '@/components/TreeSelect'
+import TreeSelect from '@/components/TreeSelect';
 // 字典标签组件
-import DictTag from '@/components/DictTag'
+import DictTag from '@/components/DictTag';
 
-import FileTop from '@/components/FileTop'
-import {
-  Icon,
-  // 表格
-  Table,
-  // 全局对象
-  VXETable
-} from 'vxe-table'
-import zhCN from 'vxe-table/es/locale/lang/zh-CN'
-import 'xe-utils'
+import FileTop from '@/components/FileTop';
+ 
+import 'xe-utils';
 
 const app = createApp(App)
 
@@ -76,15 +69,15 @@ app.component('ImageUpload', ImageUpload)
 app.component('ImagePreview', ImagePreview)
 app.component('RightToolbar', RightToolbar)
 app.component('FileTop', FileTop)
-app.component('vue-simple-context-menu', VueSimpleContextMenu);
+app.component(ContextMenu);
 
-VXETable.setup({
-  i18n: (key, args) => XEUtils.toFormatString(XEUtils.get(zhCN, key), args)
-})
+// VXETable.setup({
+//   i18n: (key, args) => XEUtils.toFormatString(XEUtils.get(zhCN, key), args)
+// })
 
  
-app.use(Table)
-app.use(Icon)
+// app.use(Table)
+// app.use(Icon)
 
 app.use(router)
 app.use(store)

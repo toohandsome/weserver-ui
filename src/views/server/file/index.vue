@@ -1,8 +1,6 @@
 <template>
    <div class="webserver-container">
-      <div id="app" @contextmenu="showMenu" style="width: 100px;height: 100px;margin-top: 20px;background: red;">
-         <vue-context-menu :contextMenuData="contextMenuData" @home="home" @deletedata="deletedata"></vue-context-menu>
-      </div>
+      
 
       <FileTop></FileTop>
 
@@ -42,8 +40,8 @@
          </div>
       </div>
       <el-table ref="multipleTableRef" :data="tableData" style="width: 100%" @selection-change="handleSelectionChange"
-         @select="handleSelection" @select-all="handleSelectionselectall" size="small" row-contextmenu="rowContextmenu"
-         row-dblclick="rowDblclick">
+         @select="handleSelection" @select-all="handleSelectionselectall" size="small" @row-contextmenu="rowContextmenu" @cell-contextmenu="cellContextmenu"
+         @row-dblclick="rowDblclick">
          <el-table-column type="selection" width="55" />
          <el-table-column property="fileName" label="文件名" show-overflow-tooltip sortable>
          </el-table-column>
@@ -68,8 +66,8 @@
                         <el-dropdown-menu>
                            <el-dropdown-item @click="handleCut(scope.$index, scope.row)">剪切</el-dropdown-item>
                            <el-dropdown-item>重命名</el-dropdown-item>
+                           <el-dropdown-item>压缩</el-dropdown-item>
                            <el-dropdown-item type="danger">删除</el-dropdown-item>
-                           <el-dropdown-item type="danger">压缩</el-dropdown-item>
                         </el-dropdown-menu>
                      </template>
                   </el-dropdown>
@@ -111,6 +109,13 @@
 
       </el-dialog>
 
+      <div id="menu" class="menuDiv">
+         <ul class="menuUl">
+            <li v-for="(item, index) in menus" :key="index" @click.stop="infoClick(index)">
+               <i :class="item.icon"></i> {{ item.name }}
+            </li>
+         </ul>
+      </div>
    </div>
 </template>
  
@@ -118,12 +123,47 @@
 <script>
 import { Search } from '@element-plus/icons-vue';
 import FileUpload from '../../../components/FileUpload/index.vue';
+
 export default {
    data() {
       return {
+
+         show: false,
+         //For $contextmenu
+         options: {
+            items: [
+               {
+                  label: "Copy",
+                  onClick: () => {
+                     document.execCommand('copy');
+                  }
+               },
+               { label: "Paste", disabled: true },
+               {
+                  label: "Print",
+                  icon: 'icon-print',
+                  onClick: () => {
+                     document.execCommand('print');
+                  }
+               },
+            ],
+            iconFontClass: 'iconfont',
+            customClass: "class-a",
+            minWidth: 230,
+            x: 0,
+            y: 0
+         },
+         //For component
+         optionsComopnent: {
+            zIndex: 3,
+            minWidth: 230,
+            x: 500,
+            y: 200
+         },
+
          pathArr: ["  根目录", "root", "abc", "123", "nnn"],
          showPathBut: true,
-         
+
          search: Search,
          backType: "",
          inputPath: "/root/abc/123/nnn",
@@ -156,43 +196,48 @@ export default {
                "upTime": "2022-05-08 19:32:27"
             }
          ],
-         contextMenuData: {
-            menuName: 'demo',
-            //菜单显示的位置
-            axis: {
-               x: null,
-               y: null
-            },
-            //菜单选项
-            menulists: [{
-               fnHandler: 'home', //绑定事件
-               icoName: 'fa fa-home fa-fw', //icon图标
-               btnName: '回到主页' //菜单名称
-            }, {
-               fnHandler: 'deletedata',
-               icoName: 'fa fa-minus-square-o  fa-fw',
-               btnName: '删除布局'
-            }]
-         }
+         menus: [
+            { name: "菜单一", operType: 1, icon: "el-icon-upload2" },
+            { name: "菜单二", operType: 2, icon: "el-icon-folder-add" },
+            { name: "菜单三", operType: 3, icon: "el-icon-edit-outline" },
+            { name: "菜单四", operType: 4, icon: "el-icon-folder-remove" },
+            { name: "菜单五", operType: 5, icon: "el-icon-download" },
+         ]
       };
    },
    methods: {
+      infoClick(index) {
+         if (index === 0) {
+            // 要做的事情
+         }
+         let menu = document.querySelector("#menu");
+         menu.style.display = "none";
+      },
+      cellContextmenu(row, column, cell, event){
+         console.log("cellContextmenu");
+         event.preventDefault();
+      },
+      rowContextmenu(row, column, event) {
+         console.log("rowContextmenu");
+         event.preventDefault();
+         let menu = document.querySelector("#menu");
+         // 根据事件对象中鼠标点击的位置，进行定位
+         menu.style.left = event.clientX   + "px";
+         menu.style.top = event.clientY   + "px";
+         // 改变自定义菜单的隐藏与显示
+         menu.style.display = "block";
+         menu.style.zIndex = 1000;
+      },
+      onButtonClick(e) {
+         //显示组件菜单
+         this.show = true;
+         this.options.x = e.x;
+         this.options.y = e.y;
+      },
       handleCurrentChange() {
          console.log("handleCurrentChange");
       },
-      showMenu() {
-         event.preventDefault();
-         var x = event.clientX;
-         var y = event.clientY;
-         this.contextMenuData.axis = {
-            x, y
-         }
-      }, homed() {
-         alert("主页")
-      },
-      deletedata() {
-         console.log('delete!')
-      },
+       
       pathInputFocus() {
          this.showPathBut = false;
          console.log("pathInputFocus", this.showPathBut, this);
@@ -256,6 +301,39 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.menuDiv {
+   display: none;
+   position: absolute;
+
+   .menuUl {
+      height: auto;
+      width: auto;
+      font-size: 14px;
+      text-align: left;
+      border-radius: 4px;
+      border: none;
+      background-color: #ffffff;
+      color: #606266;
+      list-style: none;
+      border: 1px solid #ebeef5;
+
+      li {
+         width: 140px;
+         height: 35px;
+         line-height: 35px;
+         padding: 0 10px;
+         cursor: pointer;
+         border-bottom: 1px solid rgba(255, 255, 255, 0.47);
+
+         &:hover {
+            display: block;
+            background-color: #ecf5ff;
+            color: #7abbff;
+         }
+      }
+   }
+}
+
 :deep .el-dialog__body {
    display: flex;
    justify-content: center;
@@ -269,48 +347,5 @@ export default {
 :deep .el-upload {
    width: 100%;
 }
-
-// .pathButGroup .el-button {
-//    margin-left: 0px;
-//    border-radius: 0px;
-//    padding: 2px;
-//    border: 0.5px;
-//    background-color: #f5f7fa;
-//    margin-top: 1.5px;
-//    height: 29.5px;
-//    // border: 0px;
-// }
-
-
-// :deep .el-input__prefix {
-//    transform: translateX(35px) !important;
-// }
-
-// :deep .el-input__inner {
-//    padding-left: 6px !important;
-// }
-
-
-// .input-with-select .el-input-group__prepend {
-//   background-color: var(--el-fill-color-blank);
-// }
-// .el-button--backType.is-active,
-// .el-button--backType:active {
-//   background: #20B2AA;
-//   border-color: #20B2AA;
-//   color: #fff;
-// }
-
-// .el-button--backType:focus,
-// .el-button--backType:hover {
-//   background: #48D1CC;
-//   border-color: #48D1CC;
-//   color: #fff;
-// }
-
-// .el-button--backType {
-//   color: #FFF;
-//   background-color: #20B2AA;
-//   border-color: #20B2AA;
-// }
+ 
 </style>
