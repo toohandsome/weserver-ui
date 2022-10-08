@@ -1,5 +1,5 @@
 <template>
-   <div class="webserver-container">
+   <div class="webserver-container"  >
       
 
       <FileTop></FileTop>
@@ -128,38 +128,7 @@ export default {
    data() {
       return {
 
-         show: false,
-         //For $contextmenu
-         options: {
-            items: [
-               {
-                  label: "Copy",
-                  onClick: () => {
-                     document.execCommand('copy');
-                  }
-               },
-               { label: "Paste", disabled: true },
-               {
-                  label: "Print",
-                  icon: 'icon-print',
-                  onClick: () => {
-                     document.execCommand('print');
-                  }
-               },
-            ],
-            iconFontClass: 'iconfont',
-            customClass: "class-a",
-            minWidth: 230,
-            x: 0,
-            y: 0
-         },
-         //For component
-         optionsComopnent: {
-            zIndex: 3,
-            minWidth: 230,
-            x: 500,
-            y: 200
-         },
+         
 
          pathArr: ["  根目录", "root", "abc", "123", "nnn"],
          showPathBut: true,
@@ -205,10 +174,28 @@ export default {
          ]
       };
    },
+   mounted(){
+      let app = document.querySelector("#app");
+      console.log(app, '1111111111111')
+      app.addEventListener('click', this.leftClick)
+          
+   },
    methods: {
+      leftClick(){
+         let menu = document.querySelector("#menu");
+         
+         menu.style.display = "none";
+      },
+
       infoClick(index) {
          if (index === 0) {
-            // 要做的事情
+            console.log("1");
+         }else  if (index === 1) {
+            console.log("2");
+         }else  if (index === 2) {
+            console.log("3");
+         }else  if (index === 3) {
+            console.log("4");
          }
          let menu = document.querySelector("#menu");
          menu.style.display = "none";
@@ -303,7 +290,7 @@ export default {
 <style lang='scss' scoped>
 .menuDiv {
    display: none;
-   position: absolute;
+   position: fixed;
 
    .menuUl {
       height: auto;
