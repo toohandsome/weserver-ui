@@ -14,8 +14,8 @@
                      <el-button> 终端 </el-button>
                   </el-button-group>
 
-                  刷新频率(s): <el-input-number controls-position="right" v-model="refreshTime" :min="2" label="">
-                  </el-input-number>
+                  <!-- 刷新频率(s): <el-input-number controls-position="right" v-model="refreshTime" :min="2" label="">
+                  </el-input-number> -->
 
                   <el-input label="搜索" style="width: 120px;" v-model="input2" class="w-50 m-2" placeholder="搜索进程"
                      :prefix-icon="search" />
@@ -71,8 +71,8 @@
                      <el-button> 终端 </el-button>
                   </el-button-group>
 
-                  刷新频率(s): <el-input-number controls-position="right" v-model="refreshTime" :min="2" label="">
-                  </el-input-number>
+                  <!-- 刷新频率(s): <el-input-number controls-position="right" v-model="refreshTime" :min="2" label="">
+                  </el-input-number> -->
 
                   <el-input label="搜索" style="width: 120px;" v-model="input2" class="w-50 m-2" placeholder="搜索端口"
                      :prefix-icon="search" />
@@ -173,7 +173,7 @@ export default {
                "cwd": "/opt/webserver/middleWare/redis/src/redis-server",
             },
             {
-               "pid": "208569",
+               "pid": "20856009",
                "processName": "webserver",
                "startTime": "2017-09-14 22:11:45",
                "cmdline": "java -jar webserver.jar",

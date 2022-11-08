@@ -77,6 +77,8 @@
 <script>
 
 import { ArrowRight, CaretLeft, CaretRight, CaretTop, Refresh, Search } from '@element-plus/icons-vue';
+import { markRaw } from "vue";
+
 
 export default {
 
@@ -86,12 +88,12 @@ export default {
       showPathBut: true,
       backType: '',
       inputPath: "/root/abc/123/nnn",
-      arrowRight: ArrowRight,
-      caretLeft: CaretLeft,
-      refresh: Refresh,
-      caretRight: CaretRight,
-      caretTop: CaretTop,
-      search: Search,
+      arrowRight: markRaw(ArrowRight),
+      caretLeft: markRaw(CaretLeft),
+      refresh: markRaw(Refresh),
+      caretRight: markRaw(CaretRight),
+      caretTop: markRaw(CaretTop),
+      search: markRaw(Search),
       searchPath: ""
     }
   },

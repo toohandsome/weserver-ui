@@ -33,7 +33,7 @@
       <el-tab-pane label="python">python</el-tab-pane>
       <el-tab-pane label="node">node</el-tab-pane>
     </el-tabs>
-    <el-dialog draggable v-model="dialogVisible" width="50%" :before-close="handleClose">
+    <el-dialog draggable v-model="dialogVisible" width="50%"  >
       <el-form :model="form" label-width="120px">
         <el-form-item label="脚本名称">
           <el-input v-model="form.name" />
@@ -48,7 +48,9 @@
         <el-form-item label="脚本内容">
           <el-input v-model="form.scriptText" type="textarea" />
         </el-form-item>
-
+        <el-form-item label="参数">
+          <el-input v-model="form.param" />
+        </el-form-item>
         <el-form-item label="循环次数">
           <el-input-number v-model="form.repeat" :min="1" />
         </el-form-item>
@@ -78,7 +80,8 @@ const form = reactive({
   repeat: 1,
   cron: '',
   remark: "",
-  type: "shell"
+  type: "shell",
+  param:""
 })
 const tableData = [
   {
