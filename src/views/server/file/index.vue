@@ -121,9 +121,9 @@
  
 
 <script>
+import * as fileApi from '@/api/server/file';
 import { Search } from '@element-plus/icons-vue';
 import FileUpload from '../../../components/FileUpload/index.vue';
-
 export default {
    data() {
       return {
@@ -178,7 +178,10 @@ export default {
       let app = document.querySelector("#app");
       console.log(app, '1111111111111')
       app.addEventListener('click', this.leftClick)
-          
+      console.log("fileApi",fileApi.getUserHome());
+      // fileApi.getUserHome.then(response => {
+      //    console.log("response",response);
+      // });
    },
    methods: {
       leftClick(){
